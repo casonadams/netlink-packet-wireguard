@@ -19,6 +19,7 @@ pub const WGDEVICE_A_FLAGS: u16 = 5;
 pub const WGDEVICE_A_LISTEN_PORT: u16 = 6;
 pub const WGDEVICE_A_FWMARK: u16 = 7;
 pub const WGDEVICE_A_PEERS: u16 = 8;
+pub const WGDEVICE_A_MTU: u16 = 9;
 
 pub const WGPEER_F_REMOVE_ME: u32 = 1 << 0;
 pub const WGPEER_F_REPLACE_ALLOWEDIPS: u32 = 1 << 1;

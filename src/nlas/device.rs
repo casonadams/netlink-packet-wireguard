@@ -25,6 +25,7 @@ pub enum WgDeviceAttrs {
     Fwmark(u32),
     Peers(Vec<WgPeer>),
     Flags(u32),
+    Mtu(u16),
 }
 
 impl Nla for WgDeviceAttrs {
@@ -41,6 +42,7 @@ impl Nla for WgDeviceAttrs {
                 nlas.iter().map(|op| op.buffer_len()).sum()
             }
             WgDeviceAttrs::Flags(v) => size_of_val(v),
+            WgDeviceAttrs::Mtu(v) => size_of_val(v),
         }
     }
 
@@ -55,6 +57,7 @@ impl Nla for WgDeviceAttrs {
             WgDeviceAttrs::Fwmark(_) => WGDEVICE_A_FWMARK,
             WgDeviceAttrs::Peers(_) => WGDEVICE_A_PEERS,
             WgDeviceAttrs::Flags(_) => WGDEVICE_A_FLAGS,
+            WgDeviceAttrs::Mtu(_) => WGDEVICE_A_MTU,
         }
     }
 
@@ -78,6 +81,7 @@ impl Nla for WgDeviceAttrs {
                 }
             }
             WgDeviceAttrs::Flags(v) => NativeEndian::write_u32(buffer, *v),
+            WgDeviceAttrs::Mtu(v) => NativeEndian::write_u16(buffer, *v),
         }
     }
 
@@ -137,6 +141,9 @@ impl<'a, T: AsRef<[u8]> + ?Sized> Parseable<NlaBuffer<&'a T>>
             }
             WGDEVICE_A_FLAGS => Self::Flags(
                 parse_u32(payload).context("invalid WGDEVICE_A_FLAGS value")?,
+            ),
+            WGDEVICE_A_MTU => Self::Mtu(
+                parse_u16(payload).context("invalid WGDEVICE_A_MTU value")?,
             ),
             kind => {
                 return Err(DecodeError::from(format!(
